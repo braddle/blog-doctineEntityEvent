@@ -1,0 +1,16 @@
+{
+  "name": "braddle/doctrine-entity-event",
+  "description": "An example usage of the doctrine entity event system for a blog post",
+  "minimum-stability": "stable",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Mark Bradley",
+      "email": "mark@mark-bradley.net"
+    }
+  ],
+  "require": {
+    "behat/behat": "3.1.x-dev",
+    "doctrine/orm": "2.6.x-dev"
+  }
+}
