@@ -25,6 +25,11 @@ class FeatureContext implements Context, SnippetAcceptingContext
     private $price;
 
     /**
+     * @var float
+     */
+    private $response;
+
+    /**
      * @var \Exception
      */
     private $exception;
@@ -44,7 +49,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
         $databaseConfig = [
             'driver' => 'pdo_sqlite',
-            'path'   => __DIR__ . '/db.sqlite',
+            'path'   => __DIR__ . '/../../db.sqlite',
         ];
 
         $config = Setup::createYAMLMetadataConfiguration($paths, true);
@@ -60,12 +65,33 @@ class FeatureContext implements Context, SnippetAcceptingContext
     }
 
     /**
+     * @Given it is saved
+     */
+    public function itIsSaved()
+    {
+        $this->entityManager->persist($this->price);
+        $this->entityManager->flush();
+    }
+
+    /**
      * @When I get PriceIncludingTax
      */
     public function iGetPriceincludingtax()
     {
         try {
-            $this->price->getPriceIncludingTax();
+            $this->response = $this->price->getPriceIncludingTax();
+        } catch (\Exception $e) {
+            $this->exception = $e;
+        }
+    }
+
+    /**
+     * @When I get PriceExcludingTax
+     */
+    public function iGetPriceexcludingtax()
+    {
+        try {
+            $this->response = $this->price->getPriceExcludingTax();
         } catch (\Exception $e) {
             $this->exception = $e;
         }
@@ -78,6 +104,20 @@ class FeatureContext implements Context, SnippetAcceptingContext
     {
         if (!$this->exception instanceof NoTaxCalculatorException) {
             throw new \RuntimeException('NoTaxCalculatorException was not thrown');
+        }
+    }
+
+    /**
+     * @Then the response is :arg1
+     */
+    public function theResponseIs($expectedResponse)
+    {
+        if ($this->exception != null) {
+            throw new \RuntimeException("Exception thrown during get price call: " . $this->exception->getMessage());
+        }
+
+        if ($this->response != $expectedResponse) {
+            throw new \RuntimeException('Expected ' . $expectedResponse . ' actual ' . var_export($this->response, true));
         }
     }
 }

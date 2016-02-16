@@ -14,6 +14,19 @@ class PriceIncludingTax extends Price
      */
     public function getPriceIncludingTax()
     {
-        $this->getTacCalculator();
+        $this->getTaxCalculator();
+
+        return $this->price;
+    }
+
+    /**
+     *
+     * @return flaat
+     *
+     * @throws NoTaxCalculatorException
+     */
+    public function getPriceExcludingTax()
+    {
+        return $this->getTaxCalculator()->removeTax($this->price);
     }
 }

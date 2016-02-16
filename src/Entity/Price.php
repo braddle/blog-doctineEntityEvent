@@ -40,7 +40,7 @@ abstract class Price
      *
      * @throws NoTaxCalculatorException
      */
-    protected function getTacCalculator()
+    protected function getTaxCalculator()
     {
         if (!$this->taxCalculator instanceof TaxCalculator) {
             throw new NoTaxCalculatorException('');
@@ -56,4 +56,12 @@ abstract class Price
      * @throws NoTaxCalculatorException
      */
     public abstract function getPriceIncludingTax();
+
+    /**
+     *
+     * @return flaat
+     *
+     * @throws NoTaxCalculatorException
+     */
+    public abstract function getPriceExcludingTax();
 }
