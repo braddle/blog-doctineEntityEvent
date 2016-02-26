@@ -1,6 +1,7 @@
 Braddle\Entity\Price:
   type: entity
   table: price
+  inheritanceType: SINGLE_TABLE
   discriminatorColumn:
     name: type
     type: string
@@ -17,4 +18,3 @@ Braddle\Entity\Price:
       type: float
   entityListeners:
     Braddle\EntityListener:
-

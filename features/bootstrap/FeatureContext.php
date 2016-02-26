@@ -4,6 +4,8 @@ use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Behat\Tester\Exception\PendingException;
 use Braddle\Entity\Price;
+use Braddle\Entity\PriceExcludingTax;
+use Braddle\Entity\PriceIncludingTax;
 use Braddle\Exception\NoTaxCalculatorException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Setup;
@@ -23,6 +25,11 @@ class FeatureContext implements Context, SnippetAcceptingContext
      * @var Price
      */
     private $price;
+
+    /**
+     * @var int
+     */
+    private $priceId;
 
     /**
      * @var float
@@ -57,11 +64,19 @@ class FeatureContext implements Context, SnippetAcceptingContext
     }
 
     /**
-     * @Given There is a PriceIncludingTax with value :arg1
+     * @Given There is a PriceIncludingTax with value :price
      */
     public function thereIsAPriceIncludingTaxWithValue($price)
     {
-        $this->price = new \Braddle\Entity\PriceIncludingTax($price);
+        $this->price = new PriceIncludingTax($price);
+    }
+
+    /**
+     * @Given There is a PriceExcludingTax with value :price
+     */
+    public function thereIsAPriceExcludingTaxWithValue($price)
+    {
+        $this->price = new PriceExcludingTax($price);
     }
 
     /**
@@ -71,6 +86,17 @@ class FeatureContext implements Context, SnippetAcceptingContext
     {
         $this->entityManager->persist($this->price);
         $this->entityManager->flush();
+
+        $this->priceId = $this->price->getId();
+    }
+
+    /**
+     * @Given the object is dropped
+     */
+    public function theObjectIsDropped()
+    {
+        $this->price = null;
+        $this->entityManager->clear();
     }
 
     /**
@@ -95,6 +121,14 @@ class FeatureContext implements Context, SnippetAcceptingContext
         } catch (\Exception $e) {
             $this->exception = $e;
         }
+    }
+
+    /**
+     * @When I retrieve the PriceIncludingTax
+     */
+    public function iRetrieveThePriceincludingtax()
+    {
+       $this->price = $this->entityManager->find('Braddle\Entity\Price', $this->priceId);
     }
 
     /**
